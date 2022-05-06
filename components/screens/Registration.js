@@ -5,18 +5,49 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  TextInput,
+  Pressable,
 } from 'react-native';
-import CustomInput from '../screens/CustomInput';
 import CustomButton from '../screens/CustomButton';
 import {COLOURS} from '../database/Database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'react-native-axios';
+
 const Registration = () => {
-  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
-  const onSignUpPressed = () => {
+  const onChangeUserNameHandler = username => {
+    setUsername(username);
+  };
+
+  const onChangePasswordHandler = password => {
+    setPassword(password);
+  };
+  const onSignUpPressed = async () => {
+    if (!username.trim() || !password.trim()) {
+      alert('Name or Email is invalid');
+      return;
+    }
+
+    const response = await axios.post(
+      'http://192.168.56.1:8080/user/register',
+      {
+        username: username,
+        password: password,
+      },
+    );
+    if (response.status === 200) {
+      alert(` You have created: ${JSON.stringify(response.data)}`);
+      setUsername('');
+      setPassword('');
+      navigation.navigate('SignIn');
+    } else {
+      throw new Error('An error has occurred');
+    }
+  };
+  const onNavigate = () => {
     navigation.navigate('SignIn');
   };
   return (
@@ -26,29 +57,28 @@ const Registration = () => {
           <MaterialCommunityIcons name="chevron-left" style={styles.back} />
         </TouchableOpacity>
         <Text style={styles.title}>Create Account</Text>
-        <CustomInput
-          placeholder="Email"
-          value={email}
-          setValue={setEmail}
-          secureTextEntry={false}
-        />
-        <CustomInput
-          placeholder="Username"
+        <TextInput
           value={username}
-          setValue={setUsername}
-          secureTextEntry={false}
+          onChangeText={onChangeUserNameHandler}
+          placeholder="username"
+          style={styles.container}
         />
-        <CustomInput
-          placeholder="Password"
+        <TextInput
           value={password}
-          setValue={setPassword}
+          onChangeText={onChangePasswordHandler}
+          placeholder="password"
           secureTextEntry={true}
+          style={styles.container}
         />
-
-        <CustomButton text="Register" onPress={onSignUpPressed} />
+        <Pressable
+          onPress={onSignUpPressed}
+          // onPress={() => onSignUpPressed(this)}
+          style={[styles.containerForButton, styles.container_PRIMARY]}>
+          <Text style={styles.text}>Register</Text>
+        </Pressable>
         <CustomButton
           text="Do you have account? Go to Sign-In"
-          onPress={onSignUpPressed}
+          onPress={onNavigate}
           type="TERTIARY"
         />
       </View>
@@ -73,6 +103,29 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     marginRight: 300,
+  },
+  container: {
+    backgroundColor: COLOURS.white,
+    width: '100%',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#e8e8e8',
+    paddingHorizontal: 23,
+    marginVertical: 5,
+  },
+  container_PRIMARY: {
+    backgroundColor: '#000',
+  },
+  containerForButton: {
+    width: '100%',
+    padding: 15,
+    marginVertical: 5,
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  text: {
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
 export default Registration;

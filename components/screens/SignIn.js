@@ -7,22 +7,41 @@ import {
   ScrollView,
   TouchableOpacity,
   Text,
+  TextInput,
+  Pressable,
 } from 'react-native';
 import Logo from '../database/images/GameStore.png';
-import CustomInput from '../screens/CustomInput';
 import CustomButton from '../screens/CustomButton';
 import {COLOURS} from '../database/Database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
+import AuthService from '../service/auth.service';
 
 const SignIn = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
-  const onSignInPressed = () => {
-    console.warn('Sign in');
-    navigation.navigate('Home');
+  const onChangeUserNameHandler = username => {
+    setUsername(username);
   };
+
+  const onChangePasswordHandler = password => {
+    setPassword(password);
+  };
+  const onSignInPressed = e => {
+    e.preventDefault();
+    try {
+      AuthService.login(username, password).then(() => {
+        console.log('success!');
+        setUsername('');
+        setPassword('');
+        navigation.navigate('Home');
+      });
+    } catch (a) {
+      console.log('Error');
+    }
+  };
+
   const onSignUpPressed = () => {
     navigation.navigate('SignUp');
   };
@@ -38,20 +57,24 @@ const SignIn = () => {
           style={[styles.logo, {height: height * 0.3}]}
           resizeMode="contain"
         />
-        <CustomInput
-          placeholder="Email"
-          value={email}
-          setValue={setEmail}
-          secureTextEntry={false}
+        <TextInput
+          value={username}
+          onChangeText={onChangeUserNameHandler}
+          placeholder="username"
+          style={styles.container}
         />
-        <CustomInput
-          placeholder="Password"
+        <TextInput
           value={password}
-          setValue={setPassword}
+          onChangeText={onChangePasswordHandler}
+          placeholder="password"
           secureTextEntry={true}
+          style={styles.container}
         />
-
-        <CustomButton text="Sign In" onPress={onSignInPressed} />
+        <Pressable
+          onPress={onSignInPressed}
+          style={[styles.containerForButton, styles.container_PRIMARY]}>
+          <Text style={styles.text}>Sign In</Text>
+        </Pressable>
         <CustomButton
           text="Do not have account? Create one"
           onPress={onSignUpPressed}
@@ -78,6 +101,29 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     marginRight: 300,
+  },
+  container: {
+    backgroundColor: COLOURS.white,
+    width: '100%',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#e8e8e8',
+    paddingHorizontal: 23,
+    marginVertical: 5,
+  },
+  container_PRIMARY: {
+    backgroundColor: '#000',
+  },
+  containerForButton: {
+    width: '100%',
+    padding: 15,
+    marginVertical: 5,
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  text: {
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
 export default SignIn;
