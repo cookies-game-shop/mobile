@@ -8,41 +8,43 @@ import {
   ToastAndroid,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {COLOURS, Items} from '../database/Database';
+import {COLOURS} from '../database/Database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import axios from 'react-native-axios';
 
 const MyCart = ({navigation}) => {
   const [product, setProduct] = useState();
   const [total, setTotal] = useState(null);
-
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getDataFromDB();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
-
-  //get data from local DB by ID
-  const getDataFromDB = async () => {
-    let items = await AsyncStorage.getItem('cartItems');
-    items = JSON.parse(items);
-    let productData = [];
-    if (items) {
-      Items.forEach(data => {
-        if (items.includes(data.id)) {
-          productData.push(data);
-          return;
-        }
-      });
-      setProduct(productData);
-      getTotal(productData);
-    } else {
-      setProduct(false);
-      getTotal(false);
-    }
-  };
-
+    fetchCart();
+  }, []);
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     getDataFromDB();
+  //   });
+  //
+  //   return unsubscribe;
+  // }, [navigation]);
+  //
+  // //get data from local DB by ID
+  // const getDataFromDB = async () => {
+  //   let items = await AsyncStorage.getItem('cartItems');
+  //   items = JSON.parse(items);
+  //   let productData = [];
+  //   if (items) {
+  //     Items.forEach(data => {
+  //       if (items.includes(data.id)) {
+  //         productData.push(data);
+  //         return;
+  //       }
+  //     });
+  //     setProduct(productData);
+  //     getTotal(productData);
+  //   } else {
+  //     setProduct(false);
+  //     getTotal(false);
+  //   }
+  // };
   //get total price of all items in the cart
   const getTotal = productData => {
     let total = 0;
@@ -52,24 +54,39 @@ const MyCart = ({navigation}) => {
     }
     setTotal(total);
   };
-
+  function fetchCart() {
+    axios
+      .get('http://localhost:8080/user/get-cart', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${AsyncStorage.getItem('token')}`,
+        },
+      })
+      .then(res => {
+        console.log(res);
+        setProduct(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
   //remove data from Cart
 
-  const removeItemFromCart = async id => {
-    let itemArray = await AsyncStorage.getItem('cartItems');
-    itemArray = JSON.parse(itemArray);
-    if (itemArray) {
-      let array = itemArray;
-      for (let index = 0; index < array.length; index++) {
-        if (array[index] == id) {
-          array.splice(index, 1);
-        }
-
-        await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-        getDataFromDB();
-      }
-    }
-  };
+  // const removeItemFromCart = async id => {
+  //   let itemArray = await AsyncStorage.getItem('cartItems');
+  //   itemArray = JSON.parse(itemArray);
+  //   if (itemArray) {
+  //     let array = itemArray;
+  //     for (let index = 0; index < array.length; index++) {
+  //       if (array[index] == id) {
+  //         array.splice(index, 1);
+  //       }
+  //
+  //       await AsyncStorage.setItem('cartItems', JSON.stringify(array));
+  //       getDataFromDB();
+  //     }
+  //   }
+  // };
 
   //checkout
 
@@ -85,11 +102,13 @@ const MyCart = ({navigation}) => {
     navigation.navigate('OrderDetail');
   };
 
-  const renderProducts = (data, index) => {
+  const renderProducts = (item, index) => {
     return (
       <TouchableOpacity
-        key={data.key}
-        onPress={() => navigation.navigate('ProductInfo', {productID: data.id})}
+        key={item.key}
+        onPress={() =>
+          navigation.navigate('ProductInfo', {productID: item.productID})
+        }
         style={{
           width: '100%',
           height: 100,
@@ -109,7 +128,7 @@ const MyCart = ({navigation}) => {
             marginRight: 22,
           }}>
           <Image
-            source={data.productImage}
+            source={item.previewImage}
             style={{
               width: '100%',
               height: '100%',
@@ -132,7 +151,7 @@ const MyCart = ({navigation}) => {
                 fontWeight: '600',
                 letterSpacing: 1,
               }}>
-              {data.productName}
+              {item.name}
             </Text>
             <View
               style={{
@@ -148,7 +167,7 @@ const MyCart = ({navigation}) => {
                   maxWidth: '85%',
                   marginRight: 4,
                 }}>
-                {data.productPrice} tenge
+                {item.price} tenge
               </Text>
             </View>
           </View>
@@ -199,18 +218,18 @@ const MyCart = ({navigation}) => {
                 />
               </View>
             </View>
-            <TouchableOpacity onPress={() => removeItemFromCart(data.id)}>
-              <MaterialCommunityIcons
-                name="delete-outline"
-                style={{
-                  fontSize: 16,
-                  color: COLOURS.backgroundDark,
-                  backgroundColor: COLOURS.backgroundLight,
-                  padding: 8,
-                  borderRadius: 100,
-                }}
-              />
-            </TouchableOpacity>
+            {/*<TouchableOpacity onPress={() => removeItemFromCart(data.id)}>*/}
+            {/*  <MaterialCommunityIcons*/}
+            {/*    name="delete-outline"*/}
+            {/*    style={{*/}
+            {/*      fontSize: 16,*/}
+            {/*      color: COLOURS.backgroundDark,*/}
+            {/*      backgroundColor: COLOURS.backgroundLight,*/}
+            {/*      padding: 8,*/}
+            {/*      borderRadius: 100,*/}
+            {/*    }}*/}
+            {/*  />*/}
+            {/*</TouchableOpacity>*/}
           </View>
         </View>
       </TouchableOpacity>

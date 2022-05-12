@@ -7,39 +7,35 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {COLOURS, Items} from '../database/Database';
+import {COLOURS} from '../database/Database';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import axios from 'react-native-axios';
+import {setImages} from '../service/utils';
 
 const Home = ({navigation}) => {
-  const [products, setProducts] = useState([]);
+  const [games, setGames] = useState([]);
 
-  //get called on screen loads
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getDataFromDB();
+    fetchData();
+  }, []);
+  async function fetchData() {
+    await axios.get('http://192.168.56.1:8080/game/get-list-game').then(res => {
+      const arr = res.data;
+      const cop = setImages(arr);
+      setGames(cop);
+      // setGames(res.data);
     });
-
-    return unsubscribe;
-  }, [navigation]);
-
-  //get data from DB
-
-  const getDataFromDB = () => {
-    let productList = [];
-    for (let index = 0; index < Items.length; index++) {
-      productList.push(Items[index]);
-    }
-
-    setProducts(productList);
-  };
-
+  }
   //create an product reusable card
 
-  const ProductCard = ({data}) => {
+  const ProductCard = item => {
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('ProductInfo', {productID: data.id})}
+        onPress={() =>
+          navigation.navigate('ProductInfo', {productID: item.productID})
+        }
+        key={item.id}
         style={{
           width: '48%',
           marginVertical: 14,
@@ -56,10 +52,11 @@ const Home = ({navigation}) => {
             marginBottom: 8,
           }}>
           <Image
-            source={data.productImage}
+            source={{uri: item.previewImage}}
+            accessibilityLabel={item.name}
             style={{
-              width: '80%',
-              height: '80%',
+              width: '100%',
+              height: '100%',
               resizeMode: 'contain',
             }}
           />
@@ -71,9 +68,9 @@ const Home = ({navigation}) => {
             fontWeight: '600',
             marginBottom: 2,
           }}>
-          {data.productName}
+          {item.name}
         </Text>
-        <Text>{data.productPrice} tenge</Text>
+        <Text>${item.price}</Text>
       </TouchableOpacity>
     );
   };
@@ -178,9 +175,10 @@ const Home = ({navigation}) => {
               flexWrap: 'wrap',
               justifyContent: 'space-around',
             }}>
-            {products.map(data => {
-              return <ProductCard data={data} key={data.id} />;
-            })}
+            {/*{games.map(item => {*/}
+            {/*  return <ProductCard item={item} key={item.id} />;*/}
+            {/*})}*/}
+            {games.map(ProductCard)}
           </View>
         </View>
       </ScrollView>

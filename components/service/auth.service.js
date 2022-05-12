@@ -2,8 +2,8 @@ import axios from 'axios';
 import QueryString from 'qs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 class AuthService {
-  login(username, password) {
-    return axios
+  async login(username, password, setToken, setIsAdmin) {
+    await axios
       .post(
         'http://192.168.56.1:8080/login',
         QueryString.stringify({
@@ -16,13 +16,29 @@ class AuthService {
           },
         },
       )
-      .then(function (response) {
-        console.log(response.data);
-        AsyncStorage.setItem('token', response.data.access_token);
-        AsyncStorage.setItem('refresh_token', response.data.refresh_token);
-        return response.data;
+      .then(function (res) {
+        setToken(true);
+        AsyncStorage.setItem('token', res.data.access_token);
+        AsyncStorage.setItem('refresh_token', res.data.refresh_token);
+      });
+    await axios
+      .get('http://192.168.56.1:8080/user/get-admin-creds', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${await AsyncStorage.getItem('token')}`,
+        },
+      })
+      .then(response => {
+        if (response.data === 'ADMIN') {
+          AsyncStorage.setItem('admin', response.data);
+          setIsAdmin(true);
+        }
+      })
+      .catch(e => {
+        console.log(e);
       });
   }
+
   //
   // logout() {
   //   localStorage.removeItem('token');
@@ -38,20 +54,11 @@ class AuthService {
         },
       })
       .then(response => {
-        console.log(response.data);
-        AsyncStorage.setItem('token', response.data.access_token).then(() =>
-          console.log('success!'),
-        );
-        AsyncStorage.setItem('refresh_token', response.data.refresh_token).then(
-          () => console.log('success!'),
-        );
+        AsyncStorage.setItem('token', response.data.access_token);
+        AsyncStorage.setItem('refresh_token', response.data.refresh_token);
         return true;
       });
     return false;
-  }
-
-  getCurrentUser() {
-    return JSON.parse(AsyncStorage.getItem('user'));
   }
 }
 

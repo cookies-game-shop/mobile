@@ -11,15 +11,14 @@ import {
   Animated,
   ToastAndroid,
 } from 'react-native';
-import {COLOURS, Items} from '../database/Database';
+import {COLOURS} from '../database/Database';
 import Entypo from 'react-native-vector-icons/Entypo';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import axios from 'react-native-axios';
+import CartService from '../service/CartService';
 const ProductInfo = ({route, navigation}) => {
-  const {productID} = route.params;
-
-  const [product, setProduct] = useState({});
+  const {id} = route.params;
+  const {username} = route.params;
+  const [games, setGames] = useState([]);
 
   const width = Dimensions.get('window').width;
 
@@ -27,61 +26,81 @@ const ProductInfo = ({route, navigation}) => {
 
   let position = Animated.divide(scrollX, width);
 
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     getDataFromDB();
+  //   });
+  //
+  //   return unsubscribe;
+  // }, [getDataFromDB, navigation]);
+  // const getDataFromDB = async () => {
+  //   for (let index = 0; index < Items.length; index++) {
+  //     if (Items[index].id == productID) {
+  //       await setProduct(Items[index]);
+  //       return;
+  //     }
+  //   }
+  // };
+
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getDataFromDB();
-    });
+    fetchProducts();
+  });
+  function fetchProducts() {
+    axios
+      .get(`http://192.168.56.1:8080/game/get-game?id=${id}`)
+      .then(res => {
+        console.log(res);
+        setGames(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
 
-    return unsubscribe;
-  }, [getDataFromDB, navigation]);
+  // const addToCart = async id => {
+  //   let itemArray = await AsyncStorage.getItem('cartItems');
+  //   itemArray = JSON.parse(itemArray);
+  //   if (itemArray) {
+  //     let array = itemArray;
+  //     array.push(id);
+  //
+  //     try {
+  //       await AsyncStorage.setItem('cartItems', JSON.stringify(array));
+  //       ToastAndroid.show(
+  //         'Item Added Successfully to cart',
+  //         ToastAndroid.SHORT,
+  //       );
+  //       navigation.navigate('Home');
+  //     } catch (error) {
+  //       return error;
+  //     }
+  //   } else {
+  //     let array = [];
+  //     array.push(id);
+  //     try {
+  //       await AsyncStorage.setItem('cartItems', JSON.stringify(array));
+  //       ToastAndroid.show(
+  //         'Item Added Successfully to cart',
+  //         ToastAndroid.SHORT,
+  //       );
+  //       navigation.navigate('Home');
+  //     } catch (error) {
+  //       return error;
+  //     }
+  //   }
+  // };
 
-  //get product data by productID
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getDataFromDB = async () => {
-    for (let index = 0; index < Items.length; index++) {
-      if (Items[index].id == productID) {
-        await setProduct(Items[index]);
-        return;
-      }
+  const addToCart = async e => {
+    e.preventDefault();
+    try {
+      CartService.addToCart(username, id).then(() => {
+        alert('success');
+        navigation.navigate('Home');
+      });
+    } catch (a) {
+      console.log('Error');
     }
   };
-
-  //add to cart
-
-  const addToCart = async id => {
-    let itemArray = await AsyncStorage.getItem('cartItems');
-    itemArray = JSON.parse(itemArray);
-    if (itemArray) {
-      let array = itemArray;
-      array.push(id);
-
-      try {
-        await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-        ToastAndroid.show(
-          'Item Added Successfully to cart',
-          ToastAndroid.SHORT,
-        );
-        navigation.navigate('Home');
-      } catch (error) {
-        return error;
-      }
-    } else {
-      let array = [];
-      array.push(id);
-      try {
-        await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-        ToastAndroid.show(
-          'Item Added Successfully to cart',
-          ToastAndroid.SHORT,
-        );
-        navigation.navigate('Home');
-      } catch (error) {
-        return error;
-      }
-    }
-  };
-
   //product horizontal scroll product card
   const renderProduct = ({item, index}) => {
     return (
@@ -93,7 +112,7 @@ const ProductInfo = ({route, navigation}) => {
           justifyContent: 'center',
         }}>
         <Image
-          source={item}
+          source={games.previewImage}
           style={{
             width: '100%',
             height: '100%',
@@ -150,7 +169,7 @@ const ProductInfo = ({route, navigation}) => {
             </TouchableOpacity>
           </View>
           <FlatList
-            data={product.productImageList ? product.productImageList : null}
+            data={games.previewImage ? games.previewImage : null}
             horizontal
             renderItem={renderProduct}
             showsHorizontalScrollIndicator={false}
@@ -171,8 +190,8 @@ const ProductInfo = ({route, navigation}) => {
               marginBottom: 16,
               marginTop: 32,
             }}>
-            {product.productImageList
-              ? product.productImageList.map((data, index) => {
+            {games.previewImage
+              ? games.previewImage.map((data, index) => {
                   let opacity = position.interpolate({
                     inputRange: [index - 1, index, index + 1],
                     outputRange: [0.2, 1, 0.2],
@@ -238,7 +257,7 @@ const ProductInfo = ({route, navigation}) => {
                 color: COLOURS.black,
                 maxWidth: '84%',
               }}>
-              {product.productName}
+              {games.name}
             </Text>
           </View>
           <Text
@@ -250,10 +269,9 @@ const ProductInfo = ({route, navigation}) => {
               opacity: 0.5,
               lineHeight: 20,
               maxWidth: '85%',
-              maxHeight: 44,
               marginBottom: 18,
             }}>
-            {product.description}
+            {games.par}
           </Text>
           <View>
             <Text
@@ -264,7 +282,7 @@ const ProductInfo = ({route, navigation}) => {
                 color: COLOURS.black,
                 marginBottom: 4,
               }}>
-              Price: {product.productPrice}.00 tenge
+              Price: ${games.price}
             </Text>
           </View>
         </View>
@@ -280,7 +298,7 @@ const ProductInfo = ({route, navigation}) => {
           alignItems: 'center',
         }}>
         <TouchableOpacity
-          onPress={() => (addToCart(product.id): null)}
+          onPress={addToCart}
           style={{
             width: '86%',
             height: '90%',

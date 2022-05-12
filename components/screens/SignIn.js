@@ -16,10 +16,11 @@ import {COLOURS} from '../database/Database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
 import AuthService from '../service/auth.service';
-
+import {useUserContext} from '../service/UserContext';
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const {setToken, setIsAdmin} = useUserContext();
   const navigation = useNavigation();
   const onChangeUserNameHandler = username => {
     setUsername(username);
@@ -30,16 +31,9 @@ const SignIn = () => {
   };
   const onSignInPressed = e => {
     e.preventDefault();
-    try {
-      AuthService.login(username, password).then(() => {
-        console.log('success!');
-        setUsername('');
-        setPassword('');
-        navigation.navigate('Home');
-      });
-    } catch (a) {
-      console.log('Error');
-    }
+    AuthService.login(username, password, setToken, setIsAdmin);
+    alert('success');
+    navigation.navigate('Home');
   };
 
   const onSignUpPressed = () => {

@@ -9,7 +9,7 @@ import {
   ToastAndroid,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {COLOURS, Items} from '../database/Database';
+import {COLOURS} from '../database/Database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OrderDetail = ({navigation}) => {
@@ -27,17 +27,17 @@ const OrderDetail = ({navigation}) => {
 
   //checkout
 
-  const checkOut = async () => {
-    try {
-      await AsyncStorage.removeItem('cartItems');
-    } catch (error) {
-      return error;
-    }
-
-    // ToastAndroid.show('Items will be Deliverd SOON!', ToastAndroid.SHORT);
-
-    navigation.navigate('Home');
-  };
+  // const checkOut = async () => {
+  //   try {
+  //     await AsyncStorage.removeItem('cartItems');
+  //   } catch (error) {
+  //     return error;
+  //   }
+  //
+  //   // ToastAndroid.show('Items will be Deliverd SOON!', ToastAndroid.SHORT);
+  //
+  //   navigation.navigate('Home');
+  // };
   return (
     <ScrollView showsVerticalScrollIndicator={true}>
       <View style={styles.root}>
@@ -107,7 +107,7 @@ const OrderDetail = ({navigation}) => {
             alignItems: 'center',
           }}>
           <TouchableOpacity
-            onPress={() => (total != 0 ? checkOut() : null)}
+            // onPress={() => (total != 0 ? checkOut() : null)}
             style={{
               width: '86%',
               height: '90%',
