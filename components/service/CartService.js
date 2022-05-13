@@ -1,24 +1,27 @@
 import axios from 'axios';
 import QueryString from 'qs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 class cartService {
-  addToCart(username, game_id) {
+  async addToCart(game_id) {
     axios
       .post(
-        `http://192.168.56.1:8080/user/add-to-card?username=${username}&game_id=${game_id}`,
+        `http://192.168.56.1:8080/user/add-to-card?game_id=${game_id}`,
         QueryString.stringify({
-          username: username,
           game_id: game_id,
         }),
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Bearer ${AsyncStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${await AsyncStorage.getItem('token')}`,
           },
         },
       )
-      .then(function (res) {
+      .then(res => {
         console.log(res.data);
+      })
+      .catch(error => {
+        console.log(error);
       });
   }
 }

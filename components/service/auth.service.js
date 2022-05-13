@@ -18,24 +18,9 @@ class AuthService {
       )
       .then(function (res) {
         setToken(true);
+        // console.log(res.data);
         AsyncStorage.setItem('token', res.data.access_token);
         AsyncStorage.setItem('refresh_token', res.data.refresh_token);
-      });
-    await axios
-      .get('http://192.168.56.1:8080/user/get-admin-creds', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${await AsyncStorage.getItem('token')}`,
-        },
-      })
-      .then(response => {
-        if (response.data === 'ADMIN') {
-          AsyncStorage.setItem('admin', response.data);
-          setIsAdmin(true);
-        }
-      })
-      .catch(e => {
-        console.log(e);
       });
   }
 

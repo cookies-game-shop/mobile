@@ -32,10 +32,12 @@ const Home = ({navigation}) => {
   const ProductCard = item => {
     return (
       <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('ProductInfo', {productID: item.productID})
-        }
         key={item.id}
+        onPress={() =>
+          navigation.navigate('ProductInfo', {
+            productID: item.id,
+          })
+        }
         style={{
           width: '48%',
           marginVertical: 14,
@@ -83,7 +85,7 @@ const Home = ({navigation}) => {
         backgroundColor: COLOURS.white,
       }}>
       <StatusBar backgroundColor={COLOURS.white} barStyle="dark-content" />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={true}>
         <View
           style={{
             width: '100%',

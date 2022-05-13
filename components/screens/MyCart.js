@@ -18,52 +18,17 @@ const MyCart = ({navigation}) => {
   useEffect(() => {
     fetchCart();
   }, []);
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     getDataFromDB();
-  //   });
-  //
-  //   return unsubscribe;
-  // }, [navigation]);
-  //
-  // //get data from local DB by ID
-  // const getDataFromDB = async () => {
-  //   let items = await AsyncStorage.getItem('cartItems');
-  //   items = JSON.parse(items);
-  //   let productData = [];
-  //   if (items) {
-  //     Items.forEach(data => {
-  //       if (items.includes(data.id)) {
-  //         productData.push(data);
-  //         return;
-  //       }
-  //     });
-  //     setProduct(productData);
-  //     getTotal(productData);
-  //   } else {
-  //     setProduct(false);
-  //     getTotal(false);
-  //   }
-  // };
-  //get total price of all items in the cart
-  const getTotal = productData => {
-    let total = 0;
-    for (let index = 0; index < productData.length; index++) {
-      let productPrice = productData[index].productPrice;
-      total = total + productPrice;
-    }
-    setTotal(total);
-  };
-  function fetchCart() {
+
+  async function fetchCart() {
     axios
-      .get('http://localhost:8080/user/get-cart', {
+      .get('http://192.168.56.1:8080/user/get-cart', {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${AsyncStorage.getItem('token')}`,
+          Authorization: `Bearer ${await AsyncStorage.getItem('token')}`,
         },
       })
       .then(res => {
-        console.log(res);
+        // console.log(res);
         setProduct(res.data);
       })
       .catch(err => {
@@ -106,9 +71,7 @@ const MyCart = ({navigation}) => {
     return (
       <TouchableOpacity
         key={item.key}
-        onPress={() =>
-          navigation.navigate('ProductInfo', {productID: item.productID})
-        }
+        onPress={() => navigation.navigate('ProductInfo', {productID: item.id})}
         style={{
           width: '100%',
           height: 100,
@@ -128,7 +91,8 @@ const MyCart = ({navigation}) => {
             marginRight: 22,
           }}>
           <Image
-            source={item.previewImage}
+            source={{uri: item.previewImage}}
+            accessibilityLabel={item.name}
             style={{
               width: '100%',
               height: '100%',
@@ -142,7 +106,7 @@ const MyCart = ({navigation}) => {
             height: '100%',
             justifyContent: 'space-around',
           }}>
-          <View style={{}}>
+          <View>
             <Text
               style={{
                 fontSize: 14,
@@ -167,7 +131,7 @@ const MyCart = ({navigation}) => {
                   maxWidth: '85%',
                   marginRight: 4,
                 }}>
-                {item.price} tenge
+                ${item.price}
               </Text>
             </View>
           </View>
@@ -177,47 +141,6 @@ const MyCart = ({navigation}) => {
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  borderRadius: 100,
-                  marginRight: 20,
-                  padding: 4,
-                  borderWidth: 1,
-                  borderColor: COLOURS.backgroundMedium,
-                  opacity: 0.5,
-                }}>
-                <MaterialCommunityIcons
-                  name="minus"
-                  style={{
-                    fontSize: 16,
-                    color: COLOURS.backgroundDark,
-                  }}
-                />
-              </View>
-              <Text>1</Text>
-              <View
-                style={{
-                  borderRadius: 100,
-                  marginLeft: 20,
-                  padding: 4,
-                  borderWidth: 1,
-                  borderColor: COLOURS.backgroundMedium,
-                  opacity: 0.5,
-                }}>
-                <MaterialCommunityIcons
-                  name="plus"
-                  style={{
-                    fontSize: 16,
-                    color: COLOURS.backgroundDark,
-                  }}
-                />
-              </View>
-            </View>
             {/*<TouchableOpacity onPress={() => removeItemFromCart(data.id)}>*/}
             {/*  <MaterialCommunityIcons*/}
             {/*    name="delete-outline"*/}
@@ -303,31 +226,31 @@ const MyCart = ({navigation}) => {
               }}>
               Order Info
             </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '400',
-                  maxWidth: '80%',
-                  color: COLOURS.black,
-                  opacity: 0.5,
-                }}>
-                Total
-              </Text>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: '500',
-                  color: COLOURS.black,
-                }}>
-                {total}.00 tenge
-              </Text>
-            </View>
+            {/*<View*/}
+            {/*  style={{*/}
+            {/*    flexDirection: 'row',*/}
+            {/*    alignItems: 'center',*/}
+            {/*    justifyContent: 'space-between',*/}
+            {/*  }}>*/}
+            {/*  <Text*/}
+            {/*    style={{*/}
+            {/*      fontSize: 12,*/}
+            {/*      fontWeight: '400',*/}
+            {/*      maxWidth: '80%',*/}
+            {/*      color: COLOURS.black,*/}
+            {/*      opacity: 0.5,*/}
+            {/*    }}>*/}
+            {/*    Total*/}
+            {/*  </Text>*/}
+            {/*  <Text*/}
+            {/*    style={{*/}
+            {/*      fontSize: 18,*/}
+            {/*      fontWeight: '500',*/}
+            {/*      color: COLOURS.black,*/}
+            {/*    }}>*/}
+            {/*    {total}.00 tenge*/}
+            {/*  </Text>*/}
+            {/*</View>*/}
           </View>
         </View>
       </ScrollView>
@@ -359,7 +282,7 @@ const MyCart = ({navigation}) => {
               color: COLOURS.white,
               textTransform: 'uppercase',
             }}>
-            CHECKOUT ({total} tenge)
+            CHECKOUT
           </Text>
         </TouchableOpacity>
       </View>

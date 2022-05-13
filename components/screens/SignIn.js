@@ -31,11 +31,11 @@ const SignIn = () => {
   };
   const onSignInPressed = e => {
     e.preventDefault();
-    AuthService.login(username, password, setToken, setIsAdmin);
-    alert('success');
-    navigation.navigate('Home');
+    AuthService.login(username, password, setToken, setIsAdmin).then(() => {
+      alert('success');
+      navigation.navigate('Home');
+    });
   };
-
   const onSignUpPressed = () => {
     navigation.navigate('SignUp');
   };

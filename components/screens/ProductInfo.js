@@ -5,322 +5,195 @@ import {
   StatusBar,
   ScrollView,
   TouchableOpacity,
-  FlatList,
   Image,
-  Dimensions,
-  Animated,
-  ToastAndroid,
+  StyleSheet,
 } from 'react-native';
 import {COLOURS} from '../database/Database';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'react-native-axios';
 import CartService from '../service/CartService';
+import {useParams} from 'react-router-dom';
+import {setImage} from '../service/utils';
 const ProductInfo = ({route, navigation}) => {
-  const {id} = route.params;
-  const {username} = route.params;
-  const [games, setGames] = useState([]);
-
-  const width = Dimensions.get('window').width;
-
-  const scrollX = new Animated.Value(0);
-
-  let position = Animated.divide(scrollX, width);
-
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     getDataFromDB();
-  //   });
-  //
-  //   return unsubscribe;
-  // }, [getDataFromDB, navigation]);
-  // const getDataFromDB = async () => {
-  //   for (let index = 0; index < Items.length; index++) {
-  //     if (Items[index].id == productID) {
-  //       await setProduct(Items[index]);
-  //       return;
-  //     }
-  //   }
-  // };
+  const {productID} = route.params;
+  const [product, setProduct] = useState({});
 
   useEffect(() => {
     fetchProducts();
   });
-  function fetchProducts() {
+
+  const fetchProducts = () => {
     axios
-      .get(`http://192.168.56.1:8080/game/get-game?id=${id}`)
+      .get(`http://192.168.56.1:8080/game/get-game?id=${productID}`)
       .then(res => {
-        console.log(res);
-        setGames(res.data);
+        setProduct(setImage(res.data));
+        // setProduct(res.data);
       })
       .catch(err => {
         console.log(err);
       });
-  }
-
-  // const addToCart = async id => {
-  //   let itemArray = await AsyncStorage.getItem('cartItems');
-  //   itemArray = JSON.parse(itemArray);
-  //   if (itemArray) {
-  //     let array = itemArray;
-  //     array.push(id);
-  //
-  //     try {
-  //       await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-  //       ToastAndroid.show(
-  //         'Item Added Successfully to cart',
-  //         ToastAndroid.SHORT,
-  //       );
-  //       navigation.navigate('Home');
-  //     } catch (error) {
-  //       return error;
-  //     }
-  //   } else {
-  //     let array = [];
-  //     array.push(id);
-  //     try {
-  //       await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-  //       ToastAndroid.show(
-  //         'Item Added Successfully to cart',
-  //         ToastAndroid.SHORT,
-  //       );
-  //       navigation.navigate('Home');
-  //     } catch (error) {
-  //       return error;
-  //     }
-  //   }
-  // };
-
-  const addToCart = async e => {
-    e.preventDefault();
-    try {
-      CartService.addToCart(username, id).then(() => {
-        alert('success');
-        navigation.navigate('Home');
-      });
-    } catch (a) {
-      console.log('Error');
-    }
   };
-  //product horizontal scroll product card
-  const renderProduct = ({item, index}) => {
-    return (
-      <View
-        style={{
-          width: width,
-          height: 240,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <Image
-          source={games.previewImage}
-          style={{
-            width: '100%',
-            height: '100%',
-            resizeMode: 'contain',
-          }}
-        />
-      </View>
-    );
+
+  const addToCart = e => {
+    e.preventDefault();
+    CartService.addToCart(productID);
+    alert('success');
+    navigation.navigate('Home');
   };
 
   return (
-    <View
-      style={{
-        width: '100%',
-        height: '100%',
-        backgroundColor: COLOURS.white,
-        position: 'relative',
-      }}>
+    <View style={styles.headers}>
       <StatusBar
         backgroundColor={COLOURS.backgroundLight}
         barStyle="dark-content"
       />
       <ScrollView>
-        <View
-          style={{
-            width: '100%',
-            backgroundColor: COLOURS.backgroundLight,
-            borderBottomRightRadius: 20,
-            borderBottomLeftRadius: 20,
-            position: 'relative',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: 4,
-          }}>
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingTop: 16,
-              paddingLeft: 16,
-            }}>
+        <View style={styles.root}>
+          <View style={styles.styleForNavigate}>
             <TouchableOpacity onPress={() => navigation.goBack('Home')}>
-              <Entypo
-                name="chevron-left"
-                style={{
-                  fontSize: 18,
-                  color: COLOURS.backgroundDark,
-                  padding: 12,
-                  backgroundColor: COLOURS.white,
-                  borderRadius: 10,
-                }}
-              />
+              <Entypo name="chevron-left" style={styles.entypoStyleForBack} />
             </TouchableOpacity>
           </View>
-          <FlatList
-            data={games.previewImage ? games.previewImage : null}
-            horizontal
-            renderItem={renderProduct}
-            showsHorizontalScrollIndicator={false}
-            decelerationRate={0.8}
-            snapToInterval={width}
-            bounces={false}
-            onScroll={Animated.event(
-              [{nativeEvent: {contentOffset: {x: scrollX}}}],
-              {useNativeDriver: false},
-            )}
-          />
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 16,
-              marginTop: 32,
-            }}>
-            {games.previewImage
-              ? games.previewImage.map((data, index) => {
-                  let opacity = position.interpolate({
-                    inputRange: [index - 1, index, index + 1],
-                    outputRange: [0.2, 1, 0.2],
-                    extrapolate: 'clamp',
-                  });
-                  return (
-                    <Animated.View
-                      key={index}
-                      style={{
-                        width: '16%',
-                        height: 2.4,
-                        backgroundColor: COLOURS.black,
-                        opacity,
-                        marginHorizontal: 4,
-                        borderRadius: 100,
-                      }}
-                    />
-                  );
-                })
-              : null}
+          <View style={styles.imageForBack}>
+            <Image source={{uri: product.previewImage}} style={styles.image} />
           </View>
         </View>
-        <View
-          style={{
-            paddingHorizontal: 16,
-            marginTop: 6,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginVertical: 14,
-            }}>
-            <Entypo
-              name="shopping-cart"
-              style={{
-                fontSize: 18,
-                color: COLOURS.blue,
-                marginRight: 6,
-              }}
-            />
-            <Text
-              style={{
-                fontSize: 12,
-                color: COLOURS.black,
-              }}>
-              Shopping
-            </Text>
+        <View style={styles.entypoStyleForShoppingHeader}>
+          <View style={styles.entypoStyleForShoppingRoot}>
+            <Entypo name="shopping-cart" style={styles.entypoShopping} />
+            <Text style={styles.textForShopping}>Shopping</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              marginVertical: 4,
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Text
-              style={{
-                fontSize: 24,
-                fontWeight: '600',
-                letterSpacing: 0.5,
-                marginVertical: 4,
-                color: COLOURS.black,
-                maxWidth: '84%',
-              }}>
-              {games.name}
-            </Text>
+          <View style={styles.textNameRoot}>
+            <Text style={styles.textName}>{product.name}</Text>
           </View>
-          <Text
-            style={{
-              fontSize: 12,
-              color: COLOURS.black,
-              fontWeight: '400',
-              letterSpacing: 1,
-              opacity: 0.5,
-              lineHeight: 20,
-              maxWidth: '85%',
-              marginBottom: 18,
-            }}>
-            {games.par}
-          </Text>
+          <Text style={styles.textParStyle}>{product.par}</Text>
           <View>
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: '500',
-                maxWidth: '85%',
-                color: COLOURS.black,
-                marginBottom: 4,
-              }}>
-              Price: ${games.price}
-            </Text>
+            <Text style={styles.textPriceStyle}>Price: ${product.price}</Text>
           </View>
         </View>
       </ScrollView>
-
-      <View
-        style={{
-          position: 'absolute',
-          bottom: 10,
-          height: '8%',
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <TouchableOpacity
-          onPress={addToCart}
-          style={{
-            width: '86%',
-            height: '90%',
-            backgroundColor: COLOURS.blue,
-            borderRadius: 20,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: '500',
-              letterSpacing: 1,
-              color: COLOURS.white,
-              textTransform: 'uppercase',
-            }}>
-            Add to cart
-          </Text>
+      <View style={styles.buttonRootStyle}>
+        <TouchableOpacity onPress={addToCart} style={styles.buttonAddToCart}>
+          <Text style={styles.textAddToCartStyle}> Add to cart </Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  headers: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: COLOURS.white,
+    position: 'relative',
+  },
+  root: {
+    width: '100%',
+    backgroundColor: COLOURS.backgroundLight,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  styleForNavigate: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+    paddingLeft: 16,
+  },
+  entypoStyleForBack: {
+    fontSize: 18,
+    color: COLOURS.backgroundDark,
+    padding: 12,
+    backgroundColor: COLOURS.white,
+    borderRadius: 10,
+  },
+  imageForBack: {
+    // width: width,
+    height: 240,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+  },
+  entypoStyleForShoppingHeader: {
+    paddingHorizontal: 16,
+    marginTop: 6,
+  },
+  entypoStyleForShoppingRoot: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 14,
+  },
+  entypoShopping: {
+    fontSize: 18,
+    color: COLOURS.blue,
+    marginRight: 6,
+  },
+  textForShopping: {
+    fontSize: 12,
+    color: COLOURS.black,
+  },
+  textNameRoot: {
+    flexDirection: 'row',
+    marginVertical: 4,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  textName: {
+    fontSize: 24,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+    marginVertical: 4,
+    color: COLOURS.black,
+    maxWidth: '84%',
+  },
+  textParStyle: {
+    fontSize: 12,
+    color: COLOURS.black,
+    fontWeight: '400',
+    letterSpacing: 1,
+    opacity: 0.5,
+    lineHeight: 20,
+    maxWidth: '85%',
+    marginBottom: 18,
+  },
+  textPriceStyle: {
+    fontSize: 18,
+    fontWeight: '500',
+    maxWidth: '85%',
+    color: COLOURS.black,
+    marginBottom: 4,
+  },
+  buttonRootStyle: {
+    position: 'absolute',
+    bottom: 10,
+    height: '8%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonAddToCart: {
+    width: '86%',
+    height: '90%',
+    backgroundColor: COLOURS.blue,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textAddToCartStyle: {
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: 1,
+    color: COLOURS.white,
+    textTransform: 'uppercase',
+  },
+});
 export default ProductInfo;
