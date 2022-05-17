@@ -162,6 +162,7 @@ export function setImage(element) {
       element.previewImage =
         'https://images.ctfassets.net/rporu91m20dc/5YMjnRH2E3BJNcVsvZCfkH/697efd540051638ee32de4f55beafe6c/Skyrim-AnnivEdition-UPGRADE_Bnet_BoxArt_289x411-01.jpg?q=70&fm=webp';
       break;
+
     case 'DEATHLOOP Deluxe Edition':
       element.previewImage =
         'https://images.ctfassets.net/rporu91m20dc/6tJVnmmtSd7F5ryn4LN3sS/0f794fde743362d6230e089fc789b883/Deathloop-Deluxe_Bnet-SiteStore_1200x1476-02.jpg?q=70&fm=webp';

@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLOURS} from '../database/Database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'react-native-axios';
+import {setImages} from '../service/utils';
 
 const MyCart = ({navigation}) => {
   const [product, setProduct] = useState();
@@ -29,7 +30,7 @@ const MyCart = ({navigation}) => {
       })
       .then(res => {
         // console.log(res);
-        setProduct(res.data);
+        setProduct(setImages(res.data));
       })
       .catch(err => {
         console.log(err);
@@ -48,7 +49,7 @@ const MyCart = ({navigation}) => {
   //       }
   //
   //       await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-  //       getDataFromDB();
+  //       // getDataFromDB();
   //     }
   //   }
   // };
@@ -70,7 +71,7 @@ const MyCart = ({navigation}) => {
   const renderProducts = (item, index) => {
     return (
       <TouchableOpacity
-        key={item.key}
+        key={item.id}
         onPress={() => navigation.navigate('ProductInfo', {productID: item.id})}
         style={{
           width: '100%',
@@ -141,7 +142,7 @@ const MyCart = ({navigation}) => {
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            {/*<TouchableOpacity onPress={() => removeItemFromCart(data.id)}>*/}
+            {/*<TouchableOpacity onPress={() => removeItemFromCart(item.id)}>*/}
             {/*  <MaterialCommunityIcons*/}
             {/*    name="delete-outline"*/}
             {/*    style={{*/}
@@ -248,7 +249,7 @@ const MyCart = ({navigation}) => {
             {/*      fontWeight: '500',*/}
             {/*      color: COLOURS.black,*/}
             {/*    }}>*/}
-            {/*    {total}.00 tenge*/}
+            {/*    ${total}*/}
             {/*  </Text>*/}
             {/*</View>*/}
           </View>

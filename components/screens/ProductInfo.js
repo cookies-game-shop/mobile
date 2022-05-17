@@ -12,11 +12,10 @@ import {COLOURS} from '../database/Database';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'react-native-axios';
 import CartService from '../service/CartService';
-import {useParams} from 'react-router-dom';
 import {setImage} from '../service/utils';
 const ProductInfo = ({route, navigation}) => {
   const {productID} = route.params;
-  const [product, setProduct] = useState({});
+  const [product, setProduct] = useState([]);
 
   useEffect(() => {
     fetchProducts();
@@ -26,7 +25,10 @@ const ProductInfo = ({route, navigation}) => {
     axios
       .get(`http://192.168.56.1:8080/game/get-game?id=${productID}`)
       .then(res => {
-        setProduct(setImage(res.data));
+        const cop = setImage(res.data);
+        setProduct(cop);
+        // console.log(setImage(res.data));
+        // setProduct(setImage(res.data));
         // setProduct(res.data);
       })
       .catch(err => {
@@ -36,9 +38,10 @@ const ProductInfo = ({route, navigation}) => {
 
   const addToCart = e => {
     e.preventDefault();
-    CartService.addToCart(productID);
-    alert('success');
-    navigation.navigate('Home');
+    CartService.addToCart(productID).then(() => {
+      alert('success');
+      navigation.navigate('Home');
+    });
   };
 
   return (
@@ -54,9 +57,13 @@ const ProductInfo = ({route, navigation}) => {
               <Entypo name="chevron-left" style={styles.entypoStyleForBack} />
             </TouchableOpacity>
           </View>
-          <View style={styles.imageForBack}>
-            <Image source={{uri: product.previewImage}} style={styles.image} />
-          </View>
+        </View>
+        <View style={styles.imageForBack}>
+          <Image
+            source={{uri: product.previewImage}}
+            accessibilityLabel={product.name}
+            style={styles.image}
+          />
         </View>
         <View style={styles.entypoStyleForShoppingHeader}>
           <View style={styles.entypoStyleForShoppingRoot}>
@@ -90,7 +97,7 @@ const styles = StyleSheet.create({
   },
   root: {
     width: '100%',
-    backgroundColor: COLOURS.backgroundLight,
+    // backgroundColor: COLOURS.backgroundLight,
     borderBottomRightRadius: 20,
     borderBottomLeftRadius: 20,
     position: 'relative',
@@ -109,7 +116,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: COLOURS.backgroundDark,
     padding: 12,
-    backgroundColor: COLOURS.white,
+    backgroundColor: COLOURS.backgroundLight,
     borderRadius: 10,
   },
   imageForBack: {
@@ -126,6 +133,7 @@ const styles = StyleSheet.create({
   entypoStyleForShoppingHeader: {
     paddingHorizontal: 16,
     marginTop: 6,
+    // marginLeft: 20,
   },
   entypoStyleForShoppingRoot: {
     flexDirection: 'row',
@@ -173,8 +181,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   buttonRootStyle: {
-    position: 'absolute',
-    bottom: 10,
+    position: 'relative',
+    bottom: 3,
     height: '8%',
     width: '100%',
     justifyContent: 'center',
