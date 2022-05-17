@@ -20,9 +20,8 @@ const ProductInfo = ({route, navigation}) => {
   useEffect(() => {
     fetchProducts();
   });
-
-  const fetchProducts = () => {
-    axios
+  const fetchProducts = async () => {
+    await axios
       .get(`http://192.168.56.1:8080/game/get-game?id=${productID}`)
       .then(res => {
         const cop = setImage(res.data);

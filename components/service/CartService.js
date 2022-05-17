@@ -24,6 +24,22 @@ class cartService {
         console.log(error);
       });
   }
+  async deleteFromCart(game_id) {
+    axios
+      .delete(`http://192.168.56.1:8080/user/delete-card?game_id=${game_id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${await AsyncStorage.getItem('token')}`,
+        },
+
+        data: JSON.stringify({
+          game_id: game_id,
+        }),
+      })
+      .then(function (res) {
+        console.log(res.data);
+      });
+  }
 }
 
 export default new cartService();

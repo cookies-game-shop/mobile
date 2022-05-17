@@ -12,7 +12,7 @@ import {COLOURS} from '../database/Database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'react-native-axios';
 import {setImages} from '../service/utils';
-
+import CartService from '../service/CartService';
 const MyCart = ({navigation}) => {
   const [product, setProduct] = useState();
   const [total, setTotal] = useState(null);
@@ -38,21 +38,13 @@ const MyCart = ({navigation}) => {
   }
   //remove data from Cart
 
-  // const removeItemFromCart = async id => {
-  //   let itemArray = await AsyncStorage.getItem('cartItems');
-  //   itemArray = JSON.parse(itemArray);
-  //   if (itemArray) {
-  //     let array = itemArray;
-  //     for (let index = 0; index < array.length; index++) {
-  //       if (array[index] == id) {
-  //         array.splice(index, 1);
-  //       }
-  //
-  //       await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-  //       // getDataFromDB();
-  //     }
-  //   }
-  // };
+  const removeItemFromCart = async id => {
+    CartService.deleteFromCart(id)
+      .then(() => console.log('DELETED'))
+      .catch(e => {
+        console.log(e);
+      });
+  };
 
   //checkout
 
@@ -79,6 +71,8 @@ const MyCart = ({navigation}) => {
           marginVertical: 6,
           flexDirection: 'row',
           alignItems: 'center',
+          // backgroundColor: COLOURS.backgroundLight,
+          // color: COLOURS.backgroundDark,
         }}>
         <View
           style={{
@@ -142,18 +136,18 @@ const MyCart = ({navigation}) => {
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            {/*<TouchableOpacity onPress={() => removeItemFromCart(item.id)}>*/}
-            {/*  <MaterialCommunityIcons*/}
-            {/*    name="delete-outline"*/}
-            {/*    style={{*/}
-            {/*      fontSize: 16,*/}
-            {/*      color: COLOURS.backgroundDark,*/}
-            {/*      backgroundColor: COLOURS.backgroundLight,*/}
-            {/*      padding: 8,*/}
-            {/*      borderRadius: 100,*/}
-            {/*    }}*/}
-            {/*  />*/}
-            {/*</TouchableOpacity>*/}
+            <TouchableOpacity onPress={() => removeItemFromCart(item.id)}>
+              <MaterialCommunityIcons
+                name="delete-outline"
+                style={{
+                  fontSize: 16,
+                  color: COLOURS.backgroundDark,
+                  backgroundColor: COLOURS.backgroundLight,
+                  padding: 8,
+                  borderRadius: 100,
+                }}
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </TouchableOpacity>
@@ -165,7 +159,7 @@ const MyCart = ({navigation}) => {
       style={{
         width: '100%',
         height: '100%',
-        backgroundColor: COLOURS.backgroundLight,
+        backgroundColor: COLOURS.white,
         position: 'relative',
       }}>
       <ScrollView>
@@ -266,7 +260,7 @@ const MyCart = ({navigation}) => {
           alignItems: 'center',
         }}>
         <TouchableOpacity
-          onPress={() => (total != 0 ? checkOut() : null)}
+          onPress={() => (total !== 0 ? checkOut() : null)}
           style={{
             width: '86%',
             height: '90%',
