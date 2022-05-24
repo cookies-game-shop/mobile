@@ -15,10 +15,10 @@ import {setImages} from '../service/utils';
 import CartService from '../service/CartService';
 const MyCart = ({navigation}) => {
   const [product, setProduct] = useState();
-  const [total, setTotal] = useState(null);
+  let [total, setTotal] = useState(null);
   useEffect(() => {
     fetchCart();
-  }, []);
+  });
 
   async function fetchCart() {
     axios
@@ -31,11 +31,21 @@ const MyCart = ({navigation}) => {
       .then(res => {
         // console.log(res);
         setProduct(setImages(res.data));
+        getTotal(product);
       })
       .catch(err => {
         console.log(err);
       });
   }
+
+  const getTotal = product => {
+    let total = 0;
+    for (let index = 0; index < product.length; index++) {
+      let price = product[index].price;
+      total = total + price;
+    }
+    setTotal(total);
+  };
   //remove data from Cart
 
   const removeItemFromCart = async id => {
@@ -221,31 +231,31 @@ const MyCart = ({navigation}) => {
               }}>
               Order Info
             </Text>
-            {/*<View*/}
-            {/*  style={{*/}
-            {/*    flexDirection: 'row',*/}
-            {/*    alignItems: 'center',*/}
-            {/*    justifyContent: 'space-between',*/}
-            {/*  }}>*/}
-            {/*  <Text*/}
-            {/*    style={{*/}
-            {/*      fontSize: 12,*/}
-            {/*      fontWeight: '400',*/}
-            {/*      maxWidth: '80%',*/}
-            {/*      color: COLOURS.black,*/}
-            {/*      opacity: 0.5,*/}
-            {/*    }}>*/}
-            {/*    Total*/}
-            {/*  </Text>*/}
-            {/*  <Text*/}
-            {/*    style={{*/}
-            {/*      fontSize: 18,*/}
-            {/*      fontWeight: '500',*/}
-            {/*      color: COLOURS.black,*/}
-            {/*    }}>*/}
-            {/*    ${total}*/}
-            {/*  </Text>*/}
-            {/*</View>*/}
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '400',
+                  maxWidth: '80%',
+                  color: COLOURS.black,
+                  opacity: 0.5,
+                }}>
+                Total
+              </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '500',
+                  color: COLOURS.black,
+                }}>
+                ${total}
+              </Text>
+            </View>
           </View>
         </View>
       </ScrollView>
