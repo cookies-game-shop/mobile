@@ -18,10 +18,12 @@ class cartService {
         },
       )
       .then(res => {
+        alert('Success');
         console.log(res.data);
       })
       .catch(error => {
         console.log(error);
+        alert('Please,Login or SignUp!');
       });
   }
   async deleteFromCart(game_id) {

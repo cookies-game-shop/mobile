@@ -32,7 +32,6 @@ const SignIn = () => {
   const onSignInPressed = e => {
     e.preventDefault();
     AuthService.login(username, password, setToken, setIsAdmin).then(() => {
-      alert('success');
       navigation.navigate('Home');
     });
   };
@@ -54,13 +53,13 @@ const SignIn = () => {
         <TextInput
           value={username}
           onChangeText={onChangeUserNameHandler}
-          placeholder="username"
+          placeholder="Username"
           style={styles.container}
         />
         <TextInput
           value={password}
           onChangeText={onChangePasswordHandler}
-          placeholder="password"
+          placeholder="Password"
           secureTextEntry={true}
           style={styles.container}
         />

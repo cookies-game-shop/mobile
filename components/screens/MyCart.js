@@ -60,14 +60,13 @@ const MyCart = ({navigation}) => {
   //checkout
 
   const checkOut = async () => {
-    try {
-      await AsyncStorage.removeItem('cartItems');
-    } catch (error) {
-      return error;
-    }
-
-    ToastAndroid.show('Items will be Deliverd SOON!', ToastAndroid.SHORT);
-
+    // try {
+    //   await AsyncStorage.removeItem('cartItems');
+    // } catch (error) {
+    //   return error;
+    // }
+    //
+    // ToastAndroid.show('Items will be Deliverd SOON!', ToastAndroid.SHORT);
     navigation.navigate(OrderDetail);
   };
 

@@ -23,12 +23,12 @@ export function setImages(array) {
 
       case 'Wolfenstein II: The New Colossus':
         element.previewImage =
-          '//images.ctfassets.net/rporu91m20dc/3lziPiEKysoCekwE4auESQ/f05baee9af1586cf9d79af939dfabd21/WolfensteinII_boxart-template-1200x1476.jpg?q=70&fm=webp';
+          'https://images.ctfassets.net/rporu91m20dc/3lziPiEKysoCekwE4auESQ/f05baee9af1586cf9d79af939dfabd21/WolfensteinII_boxart-template-1200x1476.jpg?q=70&fm=webp';
         break;
 
       case 'Prey: Bethesda.Net Edition':
         element.previewImage =
-          'https://images.ctfassets.net/rporu91m20dc/5HoqqJ7D9eqqsoMc0K6Ya4/1f788fac834868aadaa40937487d8562/prey-boxart-1200x1476.jpg?q=70&fm=webp';
+          'https://store-images.s-microsoft.com/image/apps.10058.63941983697911487.aea155e2-026c-4d4d-b6bf-b1caecd41ffa.0c3cb6e2-0f82-4088-bbed-6eaad8258362';
         break;
 
       case 'The Evil Within Digital Deluxe Bundle':
@@ -55,9 +55,9 @@ export function setImages(array) {
           'https://images.ctfassets.net/rporu91m20dc/5b6cExtm3DN8A9EStCAk5x/d575e5ce68bf62d2086a1467a291831d/DOOM-Eternal-DLC2_Bnet-BoxArt-SiteStore_Bnet_1200x1476-01.jpg?q=70&fm=webp';
         break;
 
-      case 'The Elder Scrolls Online Collection: Blackwood':
+      case 'The Elder Scrolls Online Collection':
         element.previewImage =
-          'https://images.ctfassets.net/rporu91m20dc/IMqNcZUfJBDZoHlqw69l0/632c10a68b048174ef18265ae7acbc7b/the-elder-scrolls-online-collection--blackwood-product-image?q=70&fm=webp';
+          'https://upload.wikimedia.org/wikipedia/ru/1/1f/The_Elder_Scrolls_Online_Blackwood.jpg';
         break;
 
       case 'The Elder Scrolls V: Skyrim - Anniversary Upgrade':
@@ -72,7 +72,7 @@ export function setImages(array) {
 
       case 'Call of Cthulhu: Dark Corners of the Earth':
         element.previewImage =
-          'https://upload.wikimedia.org/wikipedia/ru/2/2c/Call_of_Cthulhu_-_Dark_Corners_of_the_Earth_Coverart.png';
+          'https://www.ostmusic.org/images/albums/call_of_cthulhu_dark_corners_of_the_earth.jpg';
         break;
 
       case 'Quake III Arena':
@@ -97,6 +97,7 @@ export function setImages(array) {
   }
   return array;
 }
+
 export function setImage(element) {
   switch (element.name) {
     case "GHOSTWIRE: TOKYO'S VISITORS & YOKAI":
@@ -121,7 +122,7 @@ export function setImage(element) {
 
     case 'Wolfenstein II: The New Colossus':
       element.previewImage =
-        '//images.ctfassets.net/rporu91m20dc/3lziPiEKysoCekwE4auESQ/f05baee9af1586cf9d79af939dfabd21/WolfensteinII_boxart-template-1200x1476.jpg?q=70&fm=webp';
+        'https://images.ctfassets.net/rporu91m20dc/3lziPiEKysoCekwE4auESQ/f05baee9af1586cf9d79af939dfabd21/WolfensteinII_boxart-template-1200x1476.jpg?q=70&fm=webp';
       break;
 
     case 'Prey: Bethesda.Net Edition':
@@ -153,7 +154,7 @@ export function setImage(element) {
         'https://images.ctfassets.net/rporu91m20dc/5b6cExtm3DN8A9EStCAk5x/d575e5ce68bf62d2086a1467a291831d/DOOM-Eternal-DLC2_Bnet-BoxArt-SiteStore_Bnet_1200x1476-01.jpg?q=70&fm=webp';
       break;
 
-    case 'The Elder Scrolls Online Collection: Blackwood':
+    case 'The Elder Scrolls Online Collection':
       element.previewImage =
         'https://images.ctfassets.net/rporu91m20dc/IMqNcZUfJBDZoHlqw69l0/632c10a68b048174ef18265ae7acbc7b/the-elder-scrolls-online-collection--blackwood-product-image?q=70&fm=webp';
       break;

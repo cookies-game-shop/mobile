@@ -17,11 +17,18 @@ import axios from 'react-native-axios';
 const Registration = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const navigation = useNavigation();
   const onChangeUserNameHandler = username => {
     setUsername(username);
   };
-
+  const onChangeFirstNameHandler = firstName => {
+    setFirstName(firstName);
+  };
+  const onChangeLastNameHandler = lastName => {
+    setLastName(lastName);
+  };
   const onChangePasswordHandler = password => {
     setPassword(password);
   };
@@ -34,6 +41,8 @@ const Registration = () => {
     const response = await axios.post(
       'http://192.168.56.1:8080/user/register',
       {
+        firstName: firstName,
+        lastName: lastName,
         username: username,
         password: password,
       },
@@ -58,15 +67,27 @@ const Registration = () => {
         </TouchableOpacity>
         <Text style={styles.title}>Create Account</Text>
         <TextInput
+          value={firstName}
+          onChangeText={onChangeFirstNameHandler}
+          placeholder="First Name"
+          style={styles.container}
+        />
+        <TextInput
+          value={lastName}
+          onChangeText={onChangeLastNameHandler}
+          placeholder="Last Name"
+          style={styles.container}
+        />
+        <TextInput
           value={username}
           onChangeText={onChangeUserNameHandler}
-          placeholder="username"
+          placeholder="Username"
           style={styles.container}
         />
         <TextInput
           value={password}
           onChangeText={onChangePasswordHandler}
-          placeholder="password"
+          placeholder="Password"
           secureTextEntry={true}
           style={styles.container}
         />

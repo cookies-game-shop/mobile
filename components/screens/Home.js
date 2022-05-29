@@ -142,7 +142,7 @@ const Home = ({navigation}) => {
               lineHeight: 24,
             }}>
             Our application gives you the opportunity to buy
-            {'\n'}games online without leaving home and choose a game by genre
+            {'\n'}games online without leaving home and choose a game
           </Text>
         </View>
         <View

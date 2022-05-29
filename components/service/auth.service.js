@@ -21,6 +21,10 @@ class AuthService {
         // console.log(res.data);
         AsyncStorage.setItem('token', res.data.access_token);
         AsyncStorage.setItem('refresh_token', res.data.refresh_token);
+        alert('Success');
+      })
+      .catch(error => {
+        alert('Please, fill the correct username or password');
       });
   }
 

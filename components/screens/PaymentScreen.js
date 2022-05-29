@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Button,
-  Alert,
 } from 'react-native';
 import {COLOURS} from '../database/Database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -29,7 +28,9 @@ const PaymentScreen = () => {
   const handlePayPress = async () => {
     //1.Gather the customer's billing information (e.g., email)
     if (!card?.complete || !email || !name || !phone) {
-      alert('Please enter Complete card details and Email');
+      alert(
+        'Please enter Complete card details or fill correct name,email,phone',
+      );
     } else {
       alert('success');
       navigation.navigate('Home');
@@ -59,7 +60,7 @@ const PaymentScreen = () => {
           placeholder="Phone"
           style={styles.container}
         />
-        <StripeProvider publishableKey="pk_test_51JLlrQSCrqIF8lRiuhSYY7MVJSgCX6UwcuCBpj1uXQCqGncGi4KA9Zbsa9cj42TtuaNd8fN8QMu0YPXEjT6veHiY00RqWsKaoE">
+        <StripeProvider publishableKey="pk_test_6pRNASCoBOKtIshFeQd4XMUh">
           <CardField
             postalCodeEnabled={false}
             placeholder={{
@@ -84,8 +85,8 @@ const PaymentScreen = () => {
         </StripeProvider>
         <Button
           style={styles.button}
-          title="Checkout"
-          color="#841584"
+          title="Pay"
+          color="#000000"
           onPress={handlePayPress}
         />
       </View>
@@ -116,7 +117,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    backgroundColor: '#00aeef',
     borderColor: 'red',
     borderWidth: 5,
     borderRadius: 15,

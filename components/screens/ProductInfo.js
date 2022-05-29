@@ -38,7 +38,6 @@ const ProductInfo = ({route, navigation}) => {
   const addToCart = e => {
     e.preventDefault();
     CartService.addToCart(productID).then(() => {
-      alert('success');
       navigation.navigate('Home');
     });
   };
