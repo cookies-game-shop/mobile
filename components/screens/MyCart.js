@@ -13,6 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import axios from 'react-native-axios';
 import {setImages} from '../service/utils';
 import CartService from '../service/CartService';
+import OrderDetail from './OrderDetail';
 const MyCart = ({navigation}) => {
   const [product, setProduct] = useState();
   let [total, setTotal] = useState(null);
@@ -67,7 +68,7 @@ const MyCart = ({navigation}) => {
 
     ToastAndroid.show('Items will be Deliverd SOON!', ToastAndroid.SHORT);
 
-    navigation.navigate('OrderDetail');
+    navigation.navigate(OrderDetail);
   };
 
   const renderProducts = (item, index) => {
